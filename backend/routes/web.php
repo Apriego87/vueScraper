@@ -19,5 +19,6 @@ Route::get('/', function () {
 });
 
 Route::get('/index', [ScraperController::class, 'read']);
+Route::post('/add', [ScraperController::class, 'add']);
 
 require __DIR__ . '/auth.php';

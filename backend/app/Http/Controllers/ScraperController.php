@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\NewspaperModel;
 use Illuminate\Http\Request;
 use Goutte\Client;
 
@@ -26,5 +27,25 @@ class ScraperController extends Controller
         // var_dump($crawler->filter('h2'));
         return $items;
         // return view('index', ['items' => $items]);
+    }
+
+    public function add(Request $request)
+    {
+        /* $name = $request->name;
+        $link = $request->link;
+
+        $data = [
+            'name' => $name,
+            'link' => $link,
+        ];
+
+        // $item = NewspaperModel::create($data);
+
+        return response()->json([
+            'data' => $data
+        ]); */
+        return response()->json([
+            'hola' => 'hey'
+        ]);
     }
 }
