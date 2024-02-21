@@ -18,7 +18,4 @@ Route::get('/', function () {
     return ['Laravel' => app()->version()];
 });
 
-Route::get('/index', [ScraperController::class, 'read']);
-Route::post('/add', [ScraperController::class, 'add']);
-
 require __DIR__ . '/auth.php';

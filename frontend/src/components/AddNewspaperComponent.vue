@@ -37,11 +37,14 @@ const linkRules = [
 
 const submitForm = () => {
   console.log(name.value)
+  const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+  console.log(csrfToken)
 
-  fetch('http://localhost:8000/add', {
+  fetch('http://localhost:8000/api/add', {
     method: 'POST',
     headers: {
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
     },
     body: JSON.stringify({
       name: name.value,
@@ -49,7 +52,7 @@ const submitForm = () => {
     }),
   })
     .then(response => {
-     
+
       return response.json();
     })
     .then(data => {

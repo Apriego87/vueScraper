@@ -2,7 +2,7 @@
 import { ref } from 'vue';
 const products = ref(null)
 
-fetch('http://localhost:8000/index')
+fetch('http://localhost:8000/api/index')
     .then(response => response.json())
     .then(data => {
         products.value = data;

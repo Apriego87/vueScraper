@@ -31,7 +31,7 @@ class ScraperController extends Controller
 
     public function add(Request $request)
     {
-        /* $name = $request->name;
+        $name = $request->name;
         $link = $request->link;
 
         $data = [
@@ -39,13 +39,10 @@ class ScraperController extends Controller
             'link' => $link,
         ];
 
-        // $item = NewspaperModel::create($data);
+        $item = NewspaperModel::create($data);
 
         return response()->json([
-            'data' => $data
-        ]); */
-        return response()->json([
-            'hola' => 'hey'
+            'item' => $item
         ]);
     }
 }

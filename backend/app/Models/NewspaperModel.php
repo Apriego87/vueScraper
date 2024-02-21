@@ -9,6 +9,7 @@ class NewspaperModel extends Model
 {
     use HasFactory;
 
+    protected $table = 'newspapers';
     protected $fillable = [
         'name',
         'link',
