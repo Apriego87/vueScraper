@@ -1,5 +1,5 @@
 <template>
-  <div class="card m-3">
+  <div id="cont" class="card m-3">
     <div class="card-body d-flex flex-column align-center justify-center">
       <div class="w-50 text-center mt-3">
         <h1>Añadir periódico</h1>
@@ -14,12 +14,39 @@
               </v-text-field>
             </v-col>
           </v-row>
-          <v-btn class="purple darken-2 white--text mt-5" @click="submitForm"> Register </v-btn>
+          <v-btn class="purple darken-2 white--text mt-5" @click="submitForm"> Enviar</v-btn>
         </v-form>
       </div>
     </div>
   </div>
 </template>
+
+<style scoped>
+* {
+  margin: 0;
+  box-sizing: border-box;
+}
+
+#cont {
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+
+.card-body {
+  background-color: white;
+  width: 50vw;
+  padding: 20px;
+  border-radius: 10px;
+}
+
+.card-body > * {
+  margin: 20px;
+}
+</style>
 
 <script setup>
 import { ref } from 'vue';
@@ -40,7 +67,7 @@ const submitForm = () => {
   const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
   console.log(csrfToken)
 
-  fetch('http://localhost:8000/api/add', {
+  fetch('http://localhost:8000/api/newspapers', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

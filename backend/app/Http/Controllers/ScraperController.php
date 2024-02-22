@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Log;
 
 class ScraperController extends Controller
 {
-    public function readAll()
+    public function index()
     {
         $data = NewspaperModel::all();
         $client = new Client();
@@ -42,7 +42,7 @@ class ScraperController extends Controller
 
     public function readByName(Request $request)
     {
-        $np = NewspaperModel::where('name', $request->name)->pluck('link');
+        $np = NewspaperModel::where('name', $request->name)->pluck('link')[0];
         $client = new Client();
         $itemsD = array();
         $cont = 1;
@@ -66,24 +66,65 @@ class ScraperController extends Controller
 
         return response()->json([
             'items' => $itemsD,
-            'np' => $np,
         ]);
     }
 
-    public function add(Request $request)
+    public function store(Request $request)
     {
-        $name = $request->name;
-        $link = $request->link;
-
-        $data = [
-            'name' => $name,
-            'link' => $link,
-        ];
-
-        $item = NewspaperModel::create($data);
+        $request->validate([
+            'name' => 'required|string|unique:newspapers',
+            'link' => 'required|url',
+        ]);
+        $newspaper = NewspaperModel::create([
+            'name' => $request->name,
+            'link' => $request->link,
+        ]);
 
         return response()->json([
-            'item' => $item
+            'message' => 'Periódico creado correctamente.',
+            'newspaper' => $newspaper,
+        ], 201);
+    }
+
+    public function destroy(Request $request, $id)
+    {
+        $request->validate([
+            'name' => 'required|string|unique:newspapers,name,' . $id,
+            'link' => 'required|url',
+        ]);
+
+        $newspaper = NewspaperModel::findOrFail($id);
+
+        if ($newspaper) {
+            $newspaper->delete();
+
+            return response()->json([
+                'message' => 'Periódico borrado correctamente.',
+            ]);
+        } else {
+            return response()->json([
+                'error' => 'Periódico no encontrado.',
+            ], 404);
+        }
+    }
+
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'name' => 'required|string|unique:newspapers,name,' . $id,
+            'link' => 'required|url',
+        ]);
+
+        $newspaper = NewspaperModel::findOrFail($id);
+
+        $newspaper->update([
+            'name' => $request->name,
+            'link' => $request->link,
+        ]);
+
+        return response()->json([
+            'message' => 'Periódico actualizado correctamente.',
+            'newspaper' => $newspaper,
         ]);
     }
 }

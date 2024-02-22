@@ -1,7 +1,10 @@
 <template>
     <div class="card m-3">
         <div class="card-body">
-            <div v-if="products">
+            <div v-if="isLoading">
+                <h1 class="text-center my-3"><u>Cargando...</u></h1>
+            </div>
+            <div v-else-if="products">
                 <h1 class="text-center my-3"><u>Todas las Noticias</u></h1>
                 <div class="d-flex flex-row flex-wrap items-center justify-center">
                     <div class="d-flex flex-row items-center justify-center mx-3" v-for="product in products"
@@ -23,13 +26,19 @@
   
 <script setup>
 import { ref } from 'vue';
-const products = ref(null)
+const products = ref(null);
+const isLoading = ref(true); // State variable to track loading state
 
-fetch('http://localhost:8000/api/index')
+fetch('http://localhost:8000/api/newspapers')
     .then(response => response.json())
     .then(data => {
         products.value = data.items;
+        isLoading.value = false; // Set loading state to false when data is fetched
         console.log(data); // Log the fetched data to the console
+    })
+    .catch(error => {
+        console.error('Error fetching data:', error);
+        isLoading.value = false; // Set loading state to false in case of error
     });
 </script>
   
