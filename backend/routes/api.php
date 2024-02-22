@@ -19,5 +19,6 @@ Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::get('/index', [ScraperController::class, 'read']);
+Route::get('/index', [ScraperController::class, 'readAll']);
+Route::post('/readByName', [ScraperController::class, 'readByName']);
 Route::post('/add', [ScraperController::class, 'add']);
