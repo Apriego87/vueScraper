@@ -1,7 +1,7 @@
 <template>
   <div id="cont" class="card m-3">
     <div class="card-body d-flex flex-column align-center justify-center">
-      <div class="w-50 text-center mt-3">
+      <div class="w-100 text-center mt-3">
         <h1>Añadir periódico</h1>
         <v-form ref="form" class="mx-2" lazy-validation>
           <v-row>
@@ -39,11 +39,12 @@
 .card-body {
   background-color: white;
   width: 50vw;
+  min-width: 600px;
   padding: 20px;
   border-radius: 10px;
 }
 
-.card-body > * {
+.card-body>* {
   margin: 20px;
 }
 </style>
@@ -63,10 +64,6 @@ const linkRules = [
 ];
 
 const submitForm = () => {
-  console.log(name.value)
-  const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-  console.log(csrfToken)
-
   fetch('http://localhost:8000/api/newspapers', {
     method: 'POST',
     headers: {

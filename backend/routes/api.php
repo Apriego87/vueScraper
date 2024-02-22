@@ -20,10 +20,12 @@ Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
 });
 
 Route::resource('newspapers', ScraperController::class);
-// Route::put('/update', [ScraperController::class, 'update']);
+
+Route::get('getNames', [ScraperController::class, 'getNames']);
 Route::post('/readByName', [ScraperController::class, 'readByName']);
 
 /* Route::get('/index', [ScraperController::class, 'readAll']);
+// Route::put('/update', [ScraperController::class, 'update']);
 
 Route::post('/add', [ScraperController::class, 'add']);
 Route::delete('/delete', [ScraperController::class, 'destroy']); */

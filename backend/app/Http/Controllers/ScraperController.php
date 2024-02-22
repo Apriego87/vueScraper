@@ -19,11 +19,13 @@ class ScraperController extends Controller
         foreach ($data as $item) {
             try {
                 $crawler = $client->request('GET', $item->link);
-                $crawler->filter('article')->each(function ($node) use (&$itemsD, &$cont) {
+                $name = $item->name; // Store $item->name in a variable accessible in the closure
+                $crawler->filter('article')->each(function ($node) use (&$itemsD, &$cont, $name) {
                     $que = [
                         'id' => $cont,
                         'title' => $node->filter('h1, h2')->text(),
                         'link' => $node->filter('a')->attr('href'),
+                        'name' => $name // Use $name instead of $item->name
                     ];
 
                     $itemsD[] = $que;
@@ -37,6 +39,15 @@ class ScraperController extends Controller
 
         return response()->json([
             'items' => $itemsD,
+        ]);
+    }
+
+    public function getNames()
+    {
+        $list = NewspaperModel::all()->pluck('name');
+
+        return response()->json([
+            'list' => $list,
         ]);
     }
 
