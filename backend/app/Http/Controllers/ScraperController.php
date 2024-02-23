@@ -18,13 +18,15 @@ class ScraperController extends Controller
         foreach ($data as $item) {
             try {
                 $crawler = $client->request('GET', $item->link);
-                $name = $item->name; // Store $item->name in a variable accessible in the closure
-                $crawler->filter('article')->each(function ($node) use (&$itemsD, &$cont, $name) {
+                $name = $item->name;
+                $npId = NewspaperModel::where('name', $name)->value('id');
+                $crawler->filter('article')->each(function ($node) use (&$itemsD, &$cont, $name, $npId) {
                     $que = [
                         'id' => $cont,
                         'title' => $node->filter('h1, h2')->text(),
                         'link' => $node->filter('a')->attr('href'),
-                        'name' => $name // Use $name instead of $item->name
+                        'name' => $name,
+                        'npId' => $npId
                     ];
 
                     $itemsD[] = $que;
@@ -79,13 +81,8 @@ class ScraperController extends Controller
         ]);
     }
 
-    public function destroy(Request $request, $id)
+    public function destroy($id)
     {
-        $request->validate([
-            'name' => 'required|string|unique:newspapers,name,' . $id,
-            'link' => 'required|url',
-        ]);
-
         $newspaper = NewspaperModel::findOrFail($id);
 
         if ($newspaper) {
@@ -93,7 +90,7 @@ class ScraperController extends Controller
 
             return response()->json([
                 'message' => 'Periódico borrado correctamente.',
-            ]);
+            ], 200);
         } else {
             return response()->json([
                 'error' => 'Periódico no encontrado.',

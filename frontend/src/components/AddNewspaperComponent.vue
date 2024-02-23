@@ -76,7 +76,9 @@ const submitForm = () => {
     }),
   })
     .then(response => {
-
+      if (response.ok) {
+        window.location.href = '/'
+      }
       return response.json();
     })
     .then(data => {

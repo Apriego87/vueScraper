@@ -20,7 +20,7 @@
         </v-col>
 
         <v-col cols="auto">
-          <router-link to="/home">
+          <router-link to="/">
             <v-btn color="primary" min-width="228" rel="noopener noreferrer" size="x-large" target="_blank"
               variant="flat">
               <v-icon icon="mdi-speedometer" size="large" start />
