@@ -23,6 +23,7 @@ Route::resource('newspapers', ScraperController::class);
 
 Route::get('getNames', [ScraperController::class, 'getNames']);
 Route::post('/readByName', [ScraperController::class, 'readByName']);
+Route::post('/getNpData', [ScraperController::class, 'getNpData']);
 
 /* Route::get('/index', [ScraperController::class, 'readAll']);
 // Route::put('/update', [ScraperController::class, 'update']);
