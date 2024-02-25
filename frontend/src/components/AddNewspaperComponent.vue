@@ -28,7 +28,7 @@
 }
 
 #cont {
-  height: 100vh;
+  height: calc(100vh - 64px);
   width: 100vw;
   display: flex;
   flex-direction: row;
