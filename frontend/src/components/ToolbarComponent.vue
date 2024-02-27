@@ -30,6 +30,10 @@ const submitForm = () => {
         .then(response => response.json())
         .then(data => {
             console.log(data)
+
+            setTimeout(() => {
+               window.location.href = '/' 
+            }, 2000);
         })
         .catch(error => {
             console.error('Error: ', error)

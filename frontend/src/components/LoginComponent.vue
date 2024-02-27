@@ -112,7 +112,9 @@ const submitForm = () => {
             // Set the token as a cookie
             setCookie('token', token, 1); // Change '1' to the number of days you want the cookie to last
 
-            // window.location.href = '/home'
+            setTimeout(() => {
+                window.location.href = '/home'
+            }, 2000);
         })
         .catch(error => {
             // Handle any errors
