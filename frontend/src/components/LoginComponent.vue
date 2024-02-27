@@ -17,10 +17,11 @@
                         </v-row>
                         <div class="w-100 d-flex flex-row align-center justify-space-evenly">
                             <v-btn class="purple darken-2 white--text mt-5" @click="submitForm">Enviar</v-btn>
-                            <router-link to="/register">
+                            <!-- <router-link to="/register">
                                 <v-btn class="purple darken-2 white--text mt-5">Registrarse</v-btn>
-                            </router-link>
+                            </router-link> -->
                         </div>
+                        <hr>
 
                     </v-form>
                 </div>
@@ -85,19 +86,29 @@ const submitForm = () => {
     })
         .then(response => {
             if (response.ok) {
-                // window.location.href = '/'
                 console.log('all good')
-                console.log(response)
+                return response.json(); // Return the response data
+            } else {
+                throw new Error('Network response was not ok');
             }
-            return response.json();
         })
         .then(data => {
-            // Handle the response data
-            console.log(data);
+            // Extract the token from the response data
+            const token = data.token;
+
+            // Set the token as a cookie
+            setCookie('token', token, 1); // Change '1' to the number of days you want the cookie to last
         })
         .catch(error => {
             // Handle any errors
             console.error('There was a problem with the fetch operation:', error);
         });
+};
+
+const setCookie = (name, value, days) => {
+    const date = new Date();
+    date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+    const expires = 'expires=' + date.toUTCString();
+    document.cookie = name + '=' + value + ';' + expires + ';path=/';
 };
 </script>

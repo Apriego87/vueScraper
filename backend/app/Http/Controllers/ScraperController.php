@@ -8,6 +8,7 @@ use Goutte\Client;
 
 class ScraperController extends Controller
 {
+    // mostrar todos los titulares
     public function index()
     {
         $data = NewspaperModel::all();
@@ -43,6 +44,7 @@ class ScraperController extends Controller
         ]);
     }
 
+    // guardar un periódico
     public function store(Request $request)
     {
         $request->validate([
@@ -61,6 +63,7 @@ class ScraperController extends Controller
         ], 201);
     }
 
+    // actualizar un periódico
     public function update(Request $request, $id)
     {
         $request->validate([
@@ -81,6 +84,7 @@ class ScraperController extends Controller
         ]);
     }
 
+    // borrar un periódico
     public function destroy($id)
     {
         $newspaper = NewspaperModel::findOrFail($id);
@@ -98,6 +102,7 @@ class ScraperController extends Controller
         }
     }
 
+    // devolver los nombres de los periódicos guardados
     public function getNames()
     {
         $list = NewspaperModel::all()->pluck('name');
@@ -107,6 +112,7 @@ class ScraperController extends Controller
         ]);
     }
 
+    // leer noticias por nombre del periódico
     public function readByName(Request $request)
     {
         $client = new Client();
@@ -136,6 +142,7 @@ class ScraperController extends Controller
         ]);
     }
 
+    // devolver los datos de un periódico
     public function getNpData(Request $request)
     {
         $np = NewspaperModel::where('name', $request->name)->get();

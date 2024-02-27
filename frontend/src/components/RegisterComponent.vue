@@ -25,10 +25,11 @@
                     </v-row>
                     <div class="w-100 d-flex flex-row align-center justify-space-evenly">
                         <v-btn class="purple darken-2 white--text mt-5" @click="submitForm"> Enviar</v-btn>
-                        <router-link to="/login">
+                        <!-- <router-link to="/login">
                             <v-btn class="purple darken-2 white--text mt-5">Iniciar sesión</v-btn>
-                        </router-link>
+                        </router-link> -->
                     </div>
+                    <hr>
 
                 </v-form>
             </div>

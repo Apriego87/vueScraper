@@ -51,6 +51,7 @@
 
 <script setup>
 import { ref } from 'vue';
+import { getTokenFromCookie } from './cookieUtils';
 
 const name = ref('');
 const link = ref('');
@@ -69,6 +70,8 @@ const submitForm = () => {
     headers: {
       'Content-Type': 'application/json',
       'Accept': 'application/json',
+      'Authorization': `Bearer ${getTokenFromCookie()}`
+
     },
     body: JSON.stringify({
       name: name.value,

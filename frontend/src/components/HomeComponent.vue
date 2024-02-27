@@ -13,14 +13,11 @@
                                 <v-select v-model="selected" @update:modelValue="filter(selected)" class="w-50"
                                     label="Elige un periódico"
                                     :items="[...newspaperNames, 'Todos los periódicos']"></v-select>
-                                <v-btn v-if="selected !== null" color="error" dark @click="confirmDelete">Borrar
-                                    periódico</v-btn>
                             </div>
                         </div>
                     </div>
                 </div>
-                <h1 class="text-center my-3"><u>Noticias de: {{ selected !== null ? selected : 'Todos los periódicos' }}</u>
-                </h1>
+                <h1 class="text-center my-3"><u>Todas las Noticias</u></h1>
                 <div class="d-flex flex-row flex-wrap items-center justify-center">
                     <div class="d-flex flex-row items-center justify-center mx-3" v-for="product in filteredProducts"
                         :key="product.id">
@@ -52,13 +49,19 @@
   
 <script setup>
 import { ref, computed } from 'vue'
+import { getTokenFromCookie } from './cookieUtils';
 
 const products = ref(null)
 const isLoading = ref(true)
 const selected = ref(null)
 const newspaperNames = ref([])
 
-fetch('http://localhost:8000/api/newspapers')
+// Fetch data from the API and include the token in the request headers
+fetch('http://localhost:8000/api/newspapers', {
+    headers: {
+        'Authorization': `Bearer ${getTokenFromCookie()}` // Add the token to the Authorization header
+    }
+})
     .then(response => response.json())
     .then(data => {
         products.value = data.items
@@ -75,34 +78,6 @@ function filter(name) {
         selected.value = null
     } else {
         selected.value = name
-    }
-}
-
-async function confirmDelete() {
-    if (selected.value !== null) {
-        const confirmed = confirm("¿Estás seguro de que deseas borrar el periódico?");
-
-        if (confirmed) {
-            await deleteNewspaper()
-        }
-    }
-}
-
-async function deleteNewspaper() {
-    try {
-        const newspaperId = products.value.find(product => product.name === selected.value).npId
-        console.log(newspaperId)
-        const response = await fetch(`http://localhost:8000/api/newspapers/${newspaperId}`, {
-            method: 'DELETE'
-        })
-
-        if (response.ok) {
-            window.location.reload()
-        } else {
-            console.error('Error deleting news item')
-        }
-    } catch (error) {
-        console.error('Error deleting news item:', error)
     }
 }
 
