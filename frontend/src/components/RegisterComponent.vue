@@ -29,9 +29,10 @@
                             <v-btn class="purple darken-2 white--text mt-5">Iniciar sesión</v-btn>
                         </router-link> -->
                     </div>
-                    <hr>
-
                 </v-form>
+            </div>
+            <div>
+                <p>Ya tienes una cuenta? <a href="/login">Inicia sesión</a></p>
             </div>
         </div>
     </div>
@@ -67,12 +68,14 @@
 
 
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
+import { getTokenFromCookie } from './cookieUtils';
 
 const name = ref('');
 const email = ref('');
 const password = ref('');
 const passwordConf = ref('');
+const isAuthenticated = ref(false)
 
 const emailRules = [
     v => !!v || 'Mail is required',
@@ -81,6 +84,16 @@ const emailRules = [
 const passwordRules = [
     v => !!v || 'Password is required',
 ];
+
+onMounted(() => {
+    const token = getTokenFromCookie();
+    isAuthenticated.value = !!token;
+
+    // If token is set, redirect to the home page
+    if (isAuthenticated.value) {
+        window.location.href = '/home';
+    }
+});
 
 const submitForm = () => {
     fetch('http://localhost:8000/api/register', {

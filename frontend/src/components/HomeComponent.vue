@@ -1,5 +1,6 @@
 <template>
     <div class="card m-3">
+        <toolbar-component />
         <div class="card-body">
             <div v-if="isLoading">
                 <h1 class="text-center my-3"><u>Cargando...</u></h1>
@@ -50,6 +51,7 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { getTokenFromCookie } from './cookieUtils';
+import ToolbarComponent from './ToolbarComponent.vue';
 
 const products = ref(null)
 const isLoading = ref(true)

@@ -1,7 +1,7 @@
 <template>
   <v-app>
     <v-main style='background-color: rgb(210, 210, 210);'>
-      <toolbar-component></toolbar-component>
+      
       <router-view></router-view>
     </v-main>
   </v-app>
@@ -15,7 +15,7 @@
 </style>
 
 <script setup>
-import ToolbarComponent from './components/ToolbarComponent.vue';
+
 
 //
 </script>

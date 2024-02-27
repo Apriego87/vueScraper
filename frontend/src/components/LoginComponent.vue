@@ -21,9 +21,10 @@
                                 <v-btn class="purple darken-2 white--text mt-5">Registrarse</v-btn>
                             </router-link> -->
                         </div>
-                        <hr>
-
                     </v-form>
+                </div>
+                <div>
+                    <p>Todavía no estás registrado? Empieza por <a href="/register">aquí</a></p>
                 </div>
             </div>
         </div>
@@ -59,10 +60,12 @@
 </style>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
+import { getTokenFromCookie } from './cookieUtils';
 
 const email = ref('');
 const password = ref('');
+const isAuthenticated = ref(false);
 
 const emailRules = [
     v => !!v || 'Mail is required',
@@ -71,6 +74,16 @@ const emailRules = [
 const passwordRules = [
     v => !!v || 'Password is required',
 ];
+
+onMounted(() => {
+    const token = getTokenFromCookie();
+    isAuthenticated.value = !!token;
+
+    // If token is set, redirect to the home page
+    if (isAuthenticated.value) {
+        window.location.href = '/home';
+    }
+});
 
 const submitForm = () => {
     fetch('http://localhost:8000/api/login', {
@@ -98,6 +111,8 @@ const submitForm = () => {
 
             // Set the token as a cookie
             setCookie('token', token, 1); // Change '1' to the number of days you want the cookie to last
+
+            // window.location.href = '/home'
         })
         .catch(error => {
             // Handle any errors

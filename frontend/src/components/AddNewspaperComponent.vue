@@ -1,5 +1,8 @@
 <template>
   <div id="cont" class="card m-3">
+    <div id="toolbar">
+      <toolbar-component />
+    </div>
     <div class="card-body d-flex flex-column align-center justify-center">
       <div class="w-100 text-center mt-3">
         <h1>Añadir periódico</h1>
@@ -27,6 +30,12 @@
   box-sizing: border-box;
 }
 
+#toolbar {
+  position: absolute;
+  top: 0;
+  width: 100%;
+}
+
 #cont {
   height: calc(100vh - 64px);
   width: 100vw;
@@ -52,6 +61,7 @@
 <script setup>
 import { ref } from 'vue';
 import { getTokenFromCookie } from './cookieUtils';
+import ToolbarComponent from './ToolbarComponent.vue';
 
 const name = ref('');
 const link = ref('');
@@ -80,7 +90,7 @@ const submitForm = () => {
   })
     .then(response => {
       if (response.ok) {
-        window.location.href = '/'
+        window.location.href = '/home'
       }
       return response.json();
     })
