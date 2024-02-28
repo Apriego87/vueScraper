@@ -114,7 +114,7 @@ const submitForm = () => {
 
             setTimeout(() => {
                 window.location.href = '/home'
-            }, 2000);
+            }, 1000);
         })
         .catch(error => {
             // Handle any errors

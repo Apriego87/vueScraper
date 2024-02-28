@@ -90,7 +90,10 @@ const submitForm = () => {
   })
     .then(response => {
       if (response.ok) {
-        window.location.href = '/home'
+        alert('periódico añadido correctamente')
+        setTimeout(() => {
+          window.location.href = '/home'
+        }, 1000);
       }
       return response.json();
     })

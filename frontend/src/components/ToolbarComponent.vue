@@ -19,7 +19,7 @@
 </template>
 
 <script setup>
-import { getTokenFromCookie } from './cookieUtils';
+import { getTokenFromCookie, deleteTokenCookie } from './cookieUtils';
 
 const submitForm = () => {
     fetch('http://localhost:8000/api/logout', {
@@ -31,9 +31,11 @@ const submitForm = () => {
         .then(data => {
             console.log(data)
 
+            deleteTokenCookie();
+
             setTimeout(() => {
                window.location.href = '/' 
-            }, 2000);
+            }, 1000);
         })
         .catch(error => {
             console.error('Error: ', error)
