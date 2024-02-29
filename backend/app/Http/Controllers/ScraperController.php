@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\NewspaperModel;
 use Illuminate\Http\Request;
 use Goutte\Client;
+use Illuminate\Support\Facades\DB;
 
 class ScraperController extends Controller
 {
@@ -27,7 +28,7 @@ class ScraperController extends Controller
                         'title' => $node->filter('h1, h2')->text(),
                         'link' => $node->filter('a')->attr('href'),
                         'name' => $name,
-                        'npId' => $npId
+                        'npId' => $npId,
                     ];
 
                     $itemsD[] = $que;
@@ -57,9 +58,20 @@ class ScraperController extends Controller
             'link' => $request->link,
         ]);
 
+        $userId = $request->userID;
+        $npId = DB::table('newspapers')->where('name', $request->name)->value('id');
+
+        $data = [
+            'user_id' => $userId,
+            'newspaper_id' => $npId
+        ];
+
+        DB::table('user_newspaper')->insert($data);
+
         return response()->json([
             'message' => 'Periódico creado correctamente.',
             'newspaper' => $newspaper,
+            'data' => $data
         ], 201);
     }
 

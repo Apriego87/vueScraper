@@ -61,7 +61,7 @@ const newspaperNames = ref([])
 // Fetch data from the API and include the token in the request headers
 fetch('http://localhost:8000/api/newspapers', {
     headers: {
-        'Authorization': `Bearer ${getTokenFromCookie()}` // Add the token to the Authorization header
+        'Authorization': `Bearer ${getTokenFromCookie()}`
     }
 })
     .then(response => response.json())

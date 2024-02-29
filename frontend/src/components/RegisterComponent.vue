@@ -111,7 +111,6 @@ const submitForm = () => {
     })
         .then(response => {
             if (response.ok) {
-                // window.location.href = '/'
                 console.log('all good')
                 console.log(response)
             }
@@ -120,6 +119,7 @@ const submitForm = () => {
         .then(data => {
             // Handle the response data
             console.log(data);
+            window.location.href = '/login'
         })
         .catch(error => {
             // Handle any errors

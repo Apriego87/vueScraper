@@ -112,15 +112,36 @@ const submitForm = () => {
             // Set the token as a cookie
             setCookie('token', token, 1); // Change '1' to the number of days you want the cookie to last
 
-            setTimeout(() => {
-                window.location.href = '/home'
-            }, 1000);
+            // Fetch user data after login
+            fetch('http://localhost:8000/api/profile', {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(userData => {
+                    // Store user data in sessionStorage
+                    sessionStorage.setItem('userData', JSON.stringify(userData.data));
+                    // Redirect to '/home' or do any other necessary actions
+                    setTimeout(() => {
+                        window.location.href = '/home';
+                    }, 1000);
+                })
+                .catch(error => {
+                    console.error('Error fetching user data:', error);
+                });
         })
         .catch(error => {
-            // Handle any errors
-            console.error('There was a problem with the fetch operation:', error);
+            // Handle any errors during login
+            console.error('There was a problem with the login operation:', error);
         });
 };
+
 
 const setCookie = (name, value, days) => {
     const date = new Date();

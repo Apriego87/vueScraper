@@ -75,25 +75,30 @@ const linkRules = [
 ];
 
 const submitForm = () => {
+  const userDataString = sessionStorage.getItem('userData');
+  const userData = JSON.parse(userDataString);
+  console.log(userData)
+  const userID = userData.id;
+
   fetch('http://localhost:8000/api/newspapers', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       'Accept': 'application/json',
       'Authorization': `Bearer ${getTokenFromCookie()}`
-
     },
     body: JSON.stringify({
       name: name.value,
-      link: link.value
+      link: link.value,
+      userID: userID // Use the parsed user ID
     }),
   })
     .then(response => {
       if (response.ok) {
         alert('periódico añadido correctamente')
-        setTimeout(() => {
+        /* setTimeout(() => {
           window.location.href = '/home'
-        }, 1000);
+        }, 1000); */
       }
       return response.json();
     })
