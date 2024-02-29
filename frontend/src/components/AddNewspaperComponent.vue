@@ -9,12 +9,19 @@
         <v-form ref="form" class="mx-2" lazy-validation>
           <v-row>
             <v-col cols="6">
-              <v-text-field v-model="name" :rules="nameRules" label="Nombre">
-              </v-text-field>
+              <!-- Select input for newspaper names -->
+              <v-select v-model="selectedName" :items="newspaperNames" label="Seleccionar periódico"
+                @change="selectNewspaper"></v-select>
+            </v-col>
+          </v-row>
+          <v-row>
+            <v-col cols="6">
+              <!-- Text field for the name, bound to selectedName -->
+              <v-text-field v-model="selectedName" :rules="nameRules" label="Nombre"></v-text-field>
             </v-col>
             <v-col cols="6">
-              <v-text-field v-model="link" :rules="linkRules" label="Link">
-              </v-text-field>
+              <!-- Text field for the link -->
+              <v-text-field v-model="link" :rules="linkRules" label="Link"></v-text-field>
             </v-col>
           </v-row>
           <v-btn class="purple darken-2 white--text mt-5" @click="submitForm"> Enviar</v-btn>
@@ -24,47 +31,15 @@
   </div>
 </template>
 
-<style scoped>
-* {
-  margin: 0;
-  box-sizing: border-box;
-}
-
-#toolbar {
-  position: absolute;
-  top: 0;
-  width: 100%;
-}
-
-#cont {
-  height: calc(100vh - 64px);
-  width: 100vw;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-}
-
-.card-body {
-  background-color: white;
-  width: 50vw;
-  min-width: 600px;
-  padding: 20px;
-  border-radius: 10px;
-}
-
-.card-body>* {
-  margin: 20px;
-}
-</style>
-
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import { getTokenFromCookie } from './cookieUtils';
 import ToolbarComponent from './ToolbarComponent.vue';
 
 const name = ref('');
 const link = ref('');
+const newspaperNames = ref([]); // Array to store newspaper names
+const selectedName = ref(''); // Selected newspaper name
 
 const nameRules = [
   v => !!v || 'Name is required',
@@ -73,6 +48,33 @@ const nameRules = [
 const linkRules = [
   v => !!v || 'LINK is required',
 ];
+
+onMounted(() => {
+  fetchNewspaperNames(); // Fetch newspaper names when the component is mounted
+});
+
+const fetchNewspaperNames = () => {
+  fetch('http://localhost:8000/api/getNames', {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      'Authorization': `Bearer ${getTokenFromCookie()}`
+    }
+  })
+    .then(response => response.json())
+    .then(data => {
+      newspaperNames.value = data.list; // Update the newspaperNames array with the fetched data
+    })
+    .catch(error => {
+      console.error('Error fetching newspaper names:', error);
+    });
+};
+
+const selectNewspaper = () => {
+  // Update the name field with the selected newspaper name
+  name.value = selectedName.value;
+};
 
 const submitForm = () => {
   const userDataString = sessionStorage.getItem('userData');
@@ -88,26 +90,24 @@ const submitForm = () => {
       'Authorization': `Bearer ${getTokenFromCookie()}`
     },
     body: JSON.stringify({
-      name: name.value,
+      name: name.value, // Use the selected newspaper name
       link: link.value,
-      userID: userID // Use the parsed user ID
+      userID: userID
     }),
   })
     .then(response => {
       if (response.ok) {
         alert('periódico añadido correctamente')
-        /* setTimeout(() => {
+        setTimeout(() => {
           window.location.href = '/home'
-        }, 1000); */
+        }, 1000);
       }
       return response.json();
     })
     .then(data => {
-      // Handle the response data
       console.log(data);
     })
     .catch(error => {
-      // Handle any errors
       console.error('There was a problem with the fetch operation:', error);
     });
 };

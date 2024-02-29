@@ -23,6 +23,7 @@ Route::group([
     Route::resource('newspapers', ScraperController::class);
 
     Route::get('getNames', [ScraperController::class, 'getNames']);
+    Route::post('userNewspapers', [ScraperController::class, 'userNewspapers']);
     Route::post('readByName', [ScraperController::class, 'readByName']);
     Route::post('getNpData', [ScraperController::class, 'getNpData']);
 });

@@ -5,7 +5,7 @@
             <div v-if="isLoading">
                 <h1 class="text-center my-3"><u>Cargando...</u></h1>
             </div>
-            <div v-else-if="products">
+            <div v-else-if="newspapers">
                 <div id="cont" class="card m-3">
                     <div class="card-body d-flex flex-column align-center justify-center">
                         <div class="w-100 text-center mt-3">
@@ -53,11 +53,52 @@ import { ref, computed } from 'vue'
 import { getTokenFromCookie } from './cookieUtils';
 import ToolbarComponent from './ToolbarComponent.vue';
 
-const products = ref(null)
+const newspapers = ref(null)
 const isLoading = ref(true)
 const selected = ref(null)
 const newspaperNames = ref([])
+var userNewspapers = ref([])
+const userID = JSON.parse(sessionStorage.getItem('userData')).id;
 
+fetch('http://localhost:8000/api/userNewspapers', {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': `Bearer ${getTokenFromCookie()}`
+    },
+    body: JSON.stringify({
+        id: userID
+    }),
+})
+    .then(response => response.json())
+    .then(data => {
+        console.log(data.nps)
+        userNewspapers = data.nps
+        // Fetch data from the API and include the token in the request headers
+        fetch('http://localhost:8000/api/newspapers', {
+            headers: {
+                'Authorization': `Bearer ${getTokenFromCookie()}`
+            }
+        })
+            .then(response => response.json())
+            .then(data => {
+                newspapers.value = data.items.filter(item => userNewspapers.includes(item.npId));
+                isLoading.value = false
+                newspaperNames.value = Array.from(new Set(data.items
+                    .filter(item => userNewspapers.includes(item.npId))
+                    .map(item => item.name)));
+            })
+            .catch(error => {
+                console.error('Error fetching data:', error)
+                isLoading.value = false
+            })
+    })
+    .catch(error => {
+        console.error('Error fetching data:', error)
+        isLoading.value = false
+    })
+/* 
 // Fetch data from the API and include the token in the request headers
 fetch('http://localhost:8000/api/newspapers', {
     headers: {
@@ -66,14 +107,15 @@ fetch('http://localhost:8000/api/newspapers', {
 })
     .then(response => response.json())
     .then(data => {
-        products.value = data.items
+        newspapers.value = data.items
+        console.log(data.items)
         isLoading.value = false
         newspaperNames.value = Array.from(new Set(data.items.map(item => item.name)))
     })
     .catch(error => {
         console.error('Error fetching data:', error)
         isLoading.value = false
-    })
+    }) */
 
 function filter(name) {
     if (name === 'Todos los periódicos') {
@@ -84,7 +126,7 @@ function filter(name) {
 }
 
 const filteredProducts = computed(() => {
-    if (!selected.value || !products.value) return products.value
-    return selected.value ? products.value.filter(product => product.name === selected.value) : products.value
+    if (!selected.value || !newspapers.value) return newspapers.value
+    return selected.value ? newspapers.value.filter(product => product.name === selected.value) : newspapers.value
 })
 </script>

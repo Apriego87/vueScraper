@@ -49,17 +49,26 @@ class ScraperController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|unique:newspapers',
+            'name' => 'required|string',
             'link' => 'required|url',
         ]);
 
-        $newspaper = NewspaperModel::create([
-            'name' => $request->name,
-            'link' => $request->link,
-        ]);
+        $existingNewspaper = NewspaperModel::where('link', $request->link)->first();
+
+        if ($existingNewspaper) {
+        
+            $npId = $existingNewspaper->id;
+        } else {
+        
+            $newspaper = NewspaperModel::create([
+                'name' => $request->name,
+                'link' => $request->link,
+            ]);
+
+            $npId = $newspaper->id;
+        }
 
         $userId = $request->userID;
-        $npId = DB::table('newspapers')->where('name', $request->name)->value('id');
 
         $data = [
             'user_id' => $userId,
@@ -70,10 +79,11 @@ class ScraperController extends Controller
 
         return response()->json([
             'message' => 'Periódico creado correctamente.',
-            'newspaper' => $newspaper,
+            'newspaper' => $existingNewspaper ? $existingNewspaper : $newspaper,
             'data' => $data
         ], 201);
     }
+
 
     // actualizar un periódico
     public function update(Request $request, $id)
@@ -161,6 +171,14 @@ class ScraperController extends Controller
 
         return response()->json([
             'newspaper' => $np,
+        ]);
+    }
+
+    public function userNewspapers(Request $request)
+    {
+        $nps = DB::table('user_newspaper')->where('user_id', $request->id)->pluck('newspaper_id');
+        return response()->json([
+            'nps' => $nps,
         ]);
     }
 }
