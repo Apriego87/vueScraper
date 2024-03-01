@@ -1,6 +1,6 @@
 <template>
     <div id="cont" class="card m-3">
-        <div class="card-body d-flex flex-column align-center justify-center">
+        <div v-if="!isLoading" class="card-body d-flex flex-column align-center justify-center">
             <div class="w-100 text-center mt-3">
                 <h1>Registro</h1>
                 <v-form ref="form" class="mx-2" lazy-validation>
@@ -34,6 +34,9 @@
             <div>
                 <p>Ya tienes una cuenta? <a href="/login">Inicia sesión</a></p>
             </div>
+        </div>
+        <div v-if="isLoading">
+            <loading-component></loading-component>
         </div>
     </div>
 </template>
@@ -70,12 +73,14 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { getTokenFromCookie } from './cookieUtils';
+import LoadingComponent from './LoadingComponent.vue';
 
 const name = ref('');
 const email = ref('');
 const password = ref('');
 const passwordConf = ref('');
 const isAuthenticated = ref(false)
+const isLoading = ref(false)
 
 const emailRules = [
     v => !!v || 'Mail is required',
@@ -96,6 +101,7 @@ onMounted(() => {
 });
 
 const submitForm = () => {
+    isLoading.value = true;
     fetch('http://localhost:8000/api/register', {
         method: 'POST',
         headers: {
@@ -111,7 +117,6 @@ const submitForm = () => {
     })
         .then(response => {
             if (response.ok) {
-                console.log('all good')
                 console.log(response)
             }
             return response.json();

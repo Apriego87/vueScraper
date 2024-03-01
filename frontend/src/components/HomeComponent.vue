@@ -3,17 +3,19 @@
         <toolbar-component />
         <div class="card-body">
             <div v-if="isLoading">
-                <h1 class="text-center my-3"><u>Cargando...</u></h1>
+                <div id="loader" class="d-flex flex-column align-center justify-center">
+                    <loading-component></loading-component>
+                </div>
             </div>
             <div v-else-if="newspapers">
                 <div id="cont" class="card m-3">
                     <div class="card-body d-flex flex-column align-center justify-center">
                         <div class="w-100 text-center mt-3">
-                            <h1>Buscar por nombre: </h1>
+                            <h1>Filtrar por nombre: </h1>
                             <div id="cont">
                                 <v-select v-model="selected" @update:modelValue="filter(selected)" class="w-50"
                                     label="Elige un periódico"
-                                    :items="[...newspaperNames, 'Todos los periódicos']"></v-select>
+                                    :items="['Todos mis periódicos', ...newspaperNames]"></v-select>
                             </div>
                         </div>
                     </div>
@@ -22,7 +24,8 @@
                 <div class="d-flex flex-row flex-wrap items-center justify-center">
                     <div class="d-flex flex-row items-center justify-center mx-3" v-for="product in filteredProducts"
                         :key="product.id">
-                        <v-card class="my-3" width="20vw" min-width="300" :href="product.link">
+                        <v-card class="my-3 d-flex flex-column align-center justify-center" width="20vw" min-width="300"
+                            :href="product.link">
                             <v-card-item class="text-center">
                                 <v-card-title class="text-wrap">{{ product.title }}</v-card-title>
                             </v-card-item>
@@ -46,12 +49,17 @@
     justify-content: center;
     margin-top: 20px;
 }
+
+#loader {
+    height: calc(100vh - 64px);
+}
 </style>
   
 <script setup>
 import { ref, computed } from 'vue'
 import { getTokenFromCookie } from './cookieUtils';
 import ToolbarComponent from './ToolbarComponent.vue';
+import LoadingComponent from './LoadingComponent.vue';
 
 const newspapers = ref(null)
 const isLoading = ref(true)
@@ -73,7 +81,6 @@ fetch('http://localhost:8000/api/userNewspapers', {
 })
     .then(response => response.json())
     .then(data => {
-        console.log(data.nps)
         userNewspapers = data.nps
         // Fetch data from the API and include the token in the request headers
         fetch('http://localhost:8000/api/newspapers', {
@@ -98,27 +105,9 @@ fetch('http://localhost:8000/api/userNewspapers', {
         console.error('Error fetching data:', error)
         isLoading.value = false
     })
-/* 
-// Fetch data from the API and include the token in the request headers
-fetch('http://localhost:8000/api/newspapers', {
-    headers: {
-        'Authorization': `Bearer ${getTokenFromCookie()}`
-    }
-})
-    .then(response => response.json())
-    .then(data => {
-        newspapers.value = data.items
-        console.log(data.items)
-        isLoading.value = false
-        newspaperNames.value = Array.from(new Set(data.items.map(item => item.name)))
-    })
-    .catch(error => {
-        console.error('Error fetching data:', error)
-        isLoading.value = false
-    }) */
 
 function filter(name) {
-    if (name === 'Todos los periódicos') {
+    if (name === 'Todos mis periódicos') {
         selected.value = null
     } else {
         selected.value = name

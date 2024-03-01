@@ -1,7 +1,11 @@
 <template>
     <div>
         <v-toolbar dark prominent>
-            <v-toolbar-title>VueScraper</v-toolbar-title>
+            <v-toolbar-title>
+                <router-link to="/home">
+                    <p>VueScraper</p>
+                </router-link>
+            </v-toolbar-title>
 
             <v-spacer></v-spacer>
             <router-link to="/home">

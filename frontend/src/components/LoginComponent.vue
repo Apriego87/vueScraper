@@ -1,31 +1,35 @@
 <template>
     <div id="cont" class="card m-3">
         <div id="cont" class="card m-3">
-            <div class="card-body d-flex flex-column align-center justify-center">
-                <div class="w-100 text-center mt-3">
-                    <h1>Inicio de Sesión</h1>
-                    <v-form ref="form" class="mx-2" lazy-validation>
-                        <v-row>
-                            <v-col cols="6">
-                                <v-text-field v-model="email" :rules="emailRules" label="E-Mail">
-                                </v-text-field>
-                            </v-col>
-                            <v-col cols="6">
-                                <v-text-field type="password" v-model="password" :rules="passwordRules" label="Contraseña">
-                                </v-text-field>
-                            </v-col>
-                        </v-row>
-                        <div class="w-100 d-flex flex-row align-center justify-space-evenly">
-                            <v-btn class="purple darken-2 white--text mt-5" @click="submitForm">Enviar</v-btn>
-                            <!-- <router-link to="/register">
-                                <v-btn class="purple darken-2 white--text mt-5">Registrarse</v-btn>
-                            </router-link> -->
-                        </div>
-                    </v-form>
-                </div>
+            <div v-if="!isLoading" class="card-body d-flex flex-column align-center justify-center">
                 <div>
-                    <p>Todavía no estás registrado? Empieza por <a href="/register">aquí</a></p>
+                    <div class="w-100 text-center mt-3">
+                        <h1 class="mb-5">Inicio de Sesión</h1>
+                        <v-form ref="form" class="mx-2" lazy-validation>
+                            <v-row>
+                                <v-col cols="12">
+                                    <v-text-field v-model="email" :rules="emailRules" label="E-Mail">
+                                    </v-text-field>
+                                </v-col>
+                                <v-col cols="12">
+                                    <v-text-field type="password" v-model="password" :rules="passwordRules"
+                                        label="Contraseña">
+                                    </v-text-field>
+                                </v-col>
+                            </v-row>
+                            <div class="w-100 d-flex flex-row align-center justify-space-evenly">
+                                <v-btn class="purple darken-2 white--text mt-5" @click="submitForm">Enviar</v-btn>
+                            </div>
+                        </v-form>
+                    </div>
+                    <div class="mt-5">
+                        <p>Todavía no estás registrado? Empieza por <a href="/register">aquí</a></p>
+                    </div>
                 </div>
+
+            </div>
+            <div v-if="isLoading" class="mt-3">
+                <loading-component></loading-component>
             </div>
         </div>
     </div>
@@ -62,10 +66,12 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { getTokenFromCookie } from './cookieUtils';
+import LoadingComponent from './LoadingComponent.vue';
 
 const email = ref('');
 const password = ref('');
 const isAuthenticated = ref(false);
+const isLoading = ref(false);
 
 const emailRules = [
     v => !!v || 'Mail is required',
@@ -86,6 +92,7 @@ onMounted(() => {
 });
 
 const submitForm = () => {
+    isLoading.value = true;
     fetch('http://localhost:8000/api/login', {
         method: 'POST',
         headers: {
@@ -99,7 +106,6 @@ const submitForm = () => {
     })
         .then(response => {
             if (response.ok) {
-                console.log('all good')
                 return response.json(); // Return the response data
             } else {
                 throw new Error('Network response was not ok');

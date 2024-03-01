@@ -3,24 +3,21 @@
     <div id="toolbar">
       <toolbar-component />
     </div>
-    <div class="card-body d-flex flex-column align-center justify-center">
+    <div id="cont" class="card-body d-flex flex-column align-center justify-center">
       <div class="w-100 text-center mt-3">
         <h1>Añadir periódico</h1>
-        <v-form ref="form" class="mx-2" lazy-validation>
-          <v-row>
-            <v-col cols="6">
-              <!-- Select input for newspaper names -->
+        <v-form ref="form" class="mx-2 mt-5" lazy-validation>
+          <v-row class="d-flex flex-row align-center justify-center">
+            <v-col cols="3">
               <v-select v-model="selectedName" :items="newspaperNames" label="Seleccionar periódico"
                 @change="selectNewspaper"></v-select>
             </v-col>
           </v-row>
-          <v-row>
-            <v-col cols="6">
-              <!-- Text field for the name, bound to selectedName -->
+          <v-row class="d-flex flex-row align-center justify-center">
+            <v-col cols="4">
               <v-text-field v-model="selectedName" :rules="nameRules" label="Nombre"></v-text-field>
             </v-col>
-            <v-col cols="6">
-              <!-- Text field for the link -->
+            <v-col cols="4">
               <v-text-field v-model="link" :rules="linkRules" label="Link"></v-text-field>
             </v-col>
           </v-row>
@@ -31,6 +28,14 @@
   </div>
 </template>
 
+<style scoped>
+
+#cont {
+  height: calc(100vh - 64px);
+}
+
+</style>
+
 <script setup>
 import { ref, onMounted } from 'vue';
 import { getTokenFromCookie } from './cookieUtils';
@@ -38,8 +43,8 @@ import ToolbarComponent from './ToolbarComponent.vue';
 
 const name = ref('');
 const link = ref('');
-const newspaperNames = ref([]); // Array to store newspaper names
-const selectedName = ref(''); // Selected newspaper name
+const newspaperNames = ref([]);
+const selectedName = ref('');
 
 const nameRules = [
   v => !!v || 'Name is required',
@@ -50,7 +55,7 @@ const linkRules = [
 ];
 
 onMounted(() => {
-  fetchNewspaperNames(); // Fetch newspaper names when the component is mounted
+  fetchNewspaperNames();
 });
 
 const fetchNewspaperNames = () => {
@@ -64,7 +69,7 @@ const fetchNewspaperNames = () => {
   })
     .then(response => response.json())
     .then(data => {
-      newspaperNames.value = data.list; // Update the newspaperNames array with the fetched data
+      newspaperNames.value = data.list;
     })
     .catch(error => {
       console.error('Error fetching newspaper names:', error);
@@ -72,14 +77,12 @@ const fetchNewspaperNames = () => {
 };
 
 const selectNewspaper = () => {
-  // Update the name field with the selected newspaper name
   name.value = selectedName.value;
 };
 
 const submitForm = () => {
   const userDataString = sessionStorage.getItem('userData');
   const userData = JSON.parse(userDataString);
-  console.log(userData)
   const userID = userData.id;
 
   fetch('http://localhost:8000/api/newspapers', {
@@ -90,16 +93,16 @@ const submitForm = () => {
       'Authorization': `Bearer ${getTokenFromCookie()}`
     },
     body: JSON.stringify({
-      name: name.value, // Use the selected newspaper name
+      name: selectedName.value,
       link: link.value,
       userID: userID
     }),
   })
     .then(response => {
       if (response.ok) {
-        alert('periódico añadido correctamente')
+        alert('periódico añadido correctamente');
         setTimeout(() => {
-          window.location.href = '/home'
+          window.location.href = '/home';
         }, 1000);
       }
       return response.json();
