@@ -4,7 +4,7 @@
       <toolbar-component />
     </div>
     <div id="cont" class="card-body d-flex flex-column align-center justify-center">
-      <div class="w-100 text-center mt-3">
+      <div v-if="isLoading" class="w-100 text-center mt-3">
         <h1>Añadir periódico</h1>
         <v-form ref="form" class="mx-2 mt-5" lazy-validation>
           <v-row class="d-flex flex-row align-center justify-center">
@@ -24,34 +24,37 @@
           <v-btn class="purple darken-2 white--text mt-5" @click="submitForm"> Enviar</v-btn>
         </v-form>
       </div>
+      <div v-if="!isLoading">
+        <loading-component></loading-component>
+      </div>
     </div>
   </div>
 </template>
 
 <style scoped>
-
 #cont {
   height: calc(100vh - 64px);
 }
-
 </style>
 
 <script setup>
 import { ref, onMounted } from 'vue';
 import { getTokenFromCookie } from './cookieUtils';
 import ToolbarComponent from './ToolbarComponent.vue';
+import LoadingComponent from './LoadingComponent.vue';
 
 const name = ref('');
 const link = ref('');
 const newspaperNames = ref([]);
 const selectedName = ref('');
+const isLoading = ref(false)
 
 const nameRules = [
-  v => !!v || 'Name is required',
+  v => !!v || 'El nombre es necesario',
 ];
 
 const linkRules = [
-  v => !!v || 'LINK is required',
+  v => !!v || 'El link es necesario',
 ];
 
 onMounted(() => {
@@ -70,6 +73,7 @@ const fetchNewspaperNames = () => {
     .then(response => response.json())
     .then(data => {
       newspaperNames.value = data.list;
+      isLoading.value = true
     })
     .catch(error => {
       console.error('Error fetching newspaper names:', error);
