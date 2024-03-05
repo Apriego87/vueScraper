@@ -14,8 +14,8 @@ return new class extends Migration {
             $table->integer('user_id');
             $table->integer('newspaper_id');
             $table->timestamps();
-            $table->foreign('user_id')->references('id')->on('users');
-            $table->foreign('newspaper_id')->references('id')->on('newspapers');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('newspaper_id')->references('id')->on('newspapers')->onDelete('cascade');
             $table->primary(['user_id', 'newspaper_id']);
         });
     }

@@ -13,5 +13,6 @@ class NewspaperModel extends Model
     protected $fillable = [
         'name',
         'link',
+        'rss'
     ];
 }

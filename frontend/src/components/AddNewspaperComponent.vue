@@ -14,11 +14,14 @@
             </v-col>
           </v-row>
           <v-row class="d-flex flex-row align-center justify-center">
-            <v-col cols="4">
+            <v-col cols="3">
               <v-text-field v-model="selectedName" :rules="nameRules" label="Nombre"></v-text-field>
             </v-col>
-            <v-col cols="4">
+            <v-col cols="3">
               <v-text-field v-model="link" :rules="linkRules" label="Link"></v-text-field>
+            </v-col>
+            <v-col cols="3">
+              <v-text-field v-model="rss" :rules="linkRules" label="Rss"></v-text-field>
             </v-col>
           </v-row>
           <v-btn class="purple darken-2 white--text mt-5" @click="submitForm"> Enviar</v-btn>
@@ -45,6 +48,7 @@ import LoadingComponent from './LoadingComponent.vue';
 
 const name = ref('');
 const link = ref('');
+const rss = ref('')
 const newspaperNames = ref([]);
 const selectedName = ref('');
 const isLoading = ref(false)
@@ -99,6 +103,7 @@ const submitForm = () => {
     body: JSON.stringify({
       name: selectedName.value,
       link: link.value,
+      rss: rss.value,
       userID: userID
     }),
   })

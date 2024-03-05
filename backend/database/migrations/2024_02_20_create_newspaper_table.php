@@ -15,6 +15,7 @@ return new class extends Migration
             $table->integer('id')->autoIncrement();
             $table->string('name');
             $table->string('link');
+            $table->string('rss');
             $table->timestamps();
         });
     }

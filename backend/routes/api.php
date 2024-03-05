@@ -23,10 +23,13 @@ Route::group([
     Route::resource('newspapers', ScraperController::class);
 
     Route::get('getNames', [ScraperController::class, 'getNames']);
+    Route::get('rss', [ScraperController::class, 'rss']);
     Route::post('userNewspapers', [ScraperController::class, 'userNewspapers']);
     Route::post('readByName', [ScraperController::class, 'readByName']);
     Route::post('getNpData', [ScraperController::class, 'getNpData']);
 });
+
+
 
 Route::post('register', [UserController::class, 'register']);
 Route::post('login', [UserController::class, 'login']);

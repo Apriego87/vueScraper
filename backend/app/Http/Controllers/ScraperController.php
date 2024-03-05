@@ -15,6 +15,7 @@ class ScraperController extends Controller
         $data = NewspaperModel::all();
         $client = new Client();
         $itemsD = array();
+        $textArray = array();
         $cont = 1;
 
         foreach ($data as $item) {
@@ -22,7 +23,7 @@ class ScraperController extends Controller
                 $crawler = $client->request('GET', $item->link);
                 $name = $item->name;
                 $npId = NewspaperModel::where('name', $name)->value('id');
-                $crawler->filter('article')->each(function ($node) use (&$itemsD, &$cont, $name, $npId) {
+                $crawler->filter('article')->each(function ($node) use (&$itemsD, &$cont, $name, $npId, &$client, &$textArray) {
                     $que = [
                         'id' => $cont,
                         'title' => $node->filter('h1, h2')->text(),
@@ -30,6 +31,13 @@ class ScraperController extends Controller
                         'name' => $name,
                         'npId' => $npId,
                     ];
+
+                    $text = '';
+                    $crawler2 = $client->request('GET', $que['link']);
+                    $crawler2->filter('article > .clearfix, .c-detail__body > p')->each(function ($node) use (&$text) {
+                        $text .= $node->filter('p, .paragraph')->text();
+                    });
+                    $textArray[] = [$que['id'] => $text];
 
                     $itemsD[] = $que;
 
@@ -40,9 +48,50 @@ class ScraperController extends Controller
             }
         }
 
+        $titles = array();
+
+        foreach ($itemsD as $item) {
+            array_push($titles, $item['title']);
+        }
+
+        $check = array_diff($titles, $this->rss());
+
         return response()->json([
             'items' => $itemsD,
+            'countTitles' => count($titles),
+            'countCheck' => count($check),
+            'check' => array_keys($check),
+            'textArray' => $textArray
+            /* 'rss' => $this->rss(),
+            'check' => $check */
         ]);
+    }
+
+    // rss
+    public function rss()
+    {
+        $client = new Client();
+        $data = NewspaperModel::all();
+        $itemsD = array();
+
+        foreach ($data as $item) {
+            try {
+                $crawler = $client->request('GET', $item->rss);
+                $crawler->filter('item')->each(function ($node) use (&$itemsD) {
+                    $que = [
+                        'title' => $node->filter('title')->text(),
+                        // 'link' => $node->filter('a')->attr('href'),
+                    ];
+
+                    // $itemsD[] = $que;
+                    array_push($itemsD, $que['title']);
+                });
+            } catch (\Throwable $th) {
+                continue;
+            }
+        }
+
+        return $itemsD;
     }
 
     // guardar un periódico
@@ -51,18 +100,19 @@ class ScraperController extends Controller
         $request->validate([
             'name' => 'required|string',
             'link' => 'required|url',
+            'rss' => 'required|url',
         ]);
 
         $existingNewspaper = NewspaperModel::where('link', $request->link)->first();
 
         if ($existingNewspaper) {
-        
+
             $npId = $existingNewspaper->id;
         } else {
-        
             $newspaper = NewspaperModel::create([
                 'name' => $request->name,
                 'link' => $request->link,
+                'rss' => $request->rss
             ]);
 
             $npId = $newspaper->id;

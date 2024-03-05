@@ -9,6 +9,13 @@
             </div>
             <div v-else-if="newspapers">
                 <div id="cont" class="card m-3">
+                    <div class="d-flex flex-row" v-if="accuracy">
+                        <p class="mx-3">Titulares Totales: {{ accuracy[0] }}</p>
+                        <p class="mx-3">Titulares Correctos: {{ accuracy[1] }}</p>
+                        <p class="mx-3">Titulares Erróneos: {{ accuracy[2] }}</p>
+                        <p class="mx-3">Porcentaje de acierto: {{ Math.floor((accuracy[1] * 100) / accuracy[0]) }}%</p>
+
+                    </div>
                     <div class="card-body d-flex flex-column align-center justify-center">
                         <div class="w-100 text-center mt-3">
                             <h1>Filtrar por nombre: </h1>
@@ -28,6 +35,12 @@
                             :href="product.link">
                             <v-card-item class="text-center">
                                 <v-card-title class="text-wrap">{{ product.title }}</v-card-title>
+                                <div v-if="malos.includes(product.id)" class="bg-red">
+                                    <v-card-text>Erróneo</v-card-text>
+                                </div>
+                                <div v-if="!malos.includes(product.id)" class="bg-green">
+                                    <v-card-text>Correcto</v-card-text>
+                                </div>
                             </v-card-item>
                         </v-card>
                     </div>
@@ -54,7 +67,7 @@
     height: calc(100vh - 64px);
 }
 </style>
-  
+
 <script setup>
 import { ref, computed } from 'vue'
 import { getTokenFromCookie } from './cookieUtils';
@@ -64,6 +77,8 @@ import LoadingComponent from './LoadingComponent.vue';
 const newspapers = ref(null)
 const isLoading = ref(true)
 const selected = ref(null)
+const accuracy = ref([])
+const malos = ref([])
 const newspaperNames = ref([])
 var userNewspapers = ref([])
 const userID = JSON.parse(sessionStorage.getItem('userData')).id;
@@ -90,6 +105,9 @@ fetch('http://localhost:8000/api/userNewspapers', {
         })
             .then(response => response.json())
             .then(data => {
+                malos.value = data.check
+                console.log(malos.value)
+                accuracy.value = [data.countTitles, data.countTitles - data.countCheck, data.countCheck]
                 newspapers.value = data.items.filter(item => userNewspapers.includes(item.npId));
                 isLoading.value = false
                 newspaperNames.value = Array.from(new Set(data.items
